@@ -23,5 +23,5 @@ app.use(bodyParser())
 app.use(projcetsRouter.routes()).use(projcetsRouter.allowedMethods())
 app.use(usersRouter.routes()).use(usersRouter.allowedMethods())
 
-// app.listen(config.port)
-module.exports = app
+app.listen(config.port)
+// module.exports = app

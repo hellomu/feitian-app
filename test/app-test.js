@@ -10,5 +10,8 @@ describe('#test koa app', () =>{
                 phone: 18507139543,
                 password: 430051
             })
+            .end({
+                
+            })
     })
 })

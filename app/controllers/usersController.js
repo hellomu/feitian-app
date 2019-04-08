@@ -4,23 +4,34 @@ const uuidv1 = require('uuid/v1')
 const passport = require('../utils/passport')
 const config = require('../../config')
 
-// 注册
+// 登录注册时验证手机
 // blur时检验手机号码重复性
 const isPhoneUnique = async(ctx, next) => {
     const req = ctx.request.body
     const phone = req.phone
-    const isPhoneExists = userList.findOne({
-        phone,
-    }, {
-        phone: 1
-    })
-    ctx.status = 200
-    if (isPhoneExists) {
+    if (phone) {
+        const isPhoneExists = userList.findOne({
+            phone,
+        }, {
+            phone: 1
+        })
+        ctx.status = 200
+        if (!isPhoneExists) {
+            ctx.body = {
+                code: 0,
+                msg: 'The phone number is exists'
+            }
+            return
+        }
+        ctx.body = {
+            code: 1,
+            msg: 'The phone number can register'
+        }
+    } else {
         ctx.body = {
             code: 0,
-            msg: 'The phone number is exists'
+            msg: 'phone number cannot be empty'
         }
-        return
     }
 }
 // 提交保存
@@ -36,10 +47,10 @@ const userRegister = async (ctx, next) => {
         if (isNewUser) {
             const password = req.password
             const passwordCoup = await passport.enctypt(password, config.saltRounds)
-            const {password_hash, salt} = passwordCoup
+            const {hash, salt} = passwordCoup
             const isRegister = await passwordList.create({
                 userId,
-                password_hash,
+                hash,
                 salt
             })
             if (isRegister) {
@@ -75,7 +86,61 @@ const userRegister = async (ctx, next) => {
 
 // 登录
 
+const userLogin = async ctx => {
+    const req = ctx.request.body
+    const {phone, password} = req
+    if (phone && password) {
+        const loginUser = await userList.findOne({
+            phone
+        })
+        if (loginUser) {
+            const userId = loginUser.userId
+            if (userId) {
+                const passwordData = await passwordList.findOne({
+                    userId
+                })
+                if (passwordData) {
+                    const salt = passwordData.salt
+                    const hash = passport.checkPassword(password, salt)
+                    if (hash === passwordData.hash) {
+                        ctx.body = {
+                            code: 1,
+                            msg: 'login success'
+                        }
+                    } else {
+                        ctx.body = {
+                            code: 0,
+                            msg: 'the password is false'
+                        }
+                    }
+                } else {
+                    ctx.body = {
+                        code: 0,
+                        msg: 'the account is invalid'
+                    }
+                }
+            } else {
+                ctx.body = {
+                    code: 0,
+                    msg: 'the account is invalid'
+                }
+            }
+        } else {
+            ctx.body = {
+                code: 2,
+                msg:"account is no exsists"
+            }
+        }
+    } else {
+        ctx.body = {
+            code: 0,
+            msg: "account or password number is empty"
+        }
+    }
+}
+
 module.exports = {
     isPhoneUnique,
-    userRegister
+    userRegister,
+    userLogin
 }

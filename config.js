@@ -1,5 +1,5 @@
 module.exports = {
     port:3000,
-    db:'mongodb://localhost:27017/admin',
-    saltRounds: 32
+    db:'mongodb://localhost:27017/feitiandb',
+    saltRounds: 10
 }

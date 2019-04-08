@@ -1,13 +1,13 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const usersSchema = new Schema({
+const passwordsSchema = new Schema({
     userId: {
         type: String,
         unique: true,
         require: true
     },
-    password_Hash: {
+    hash: {
         type: String,
         require: true
     },
@@ -16,3 +16,5 @@ const usersSchema = new Schema({
         require: true
     }
 })
+
+module.exports = mongoose.model('passwords', passwordsSchema)
