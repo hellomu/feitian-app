@@ -3,6 +3,7 @@ const passwordList = require('../models/passwords')
 const uuidv1 = require('uuid/v1')
 const passport = require('../utils/passport')
 const config = require('../../config')
+const tokenContro = require('../utils/tokencontroll')
 
 // 登录注册时验证手机
 // blur时检验手机号码重复性
@@ -53,6 +54,7 @@ const userRegister = async (ctx, next) => {
                 hash,
                 salt
             })
+            ctx.status = 200
             if (isRegister) {
                 ctx.body = {
                     code: 1,
@@ -99,13 +101,18 @@ const userLogin = async ctx => {
                 const passwordData = await passwordList.findOne({
                     userId
                 })
+                ctx.status = 200
                 if (passwordData) {
                     const salt = passwordData.salt
                     const hash = passport.checkPassword(password, salt)
                     if (hash === passwordData.hash) {
+                        const token = tokenContro.addToken(loginUser)
                         ctx.body = {
                             code: 1,
-                            msg: 'login success'
+                            msg: 'login success',
+                            phone: passwordData.phone,
+                            userId: passwordData.userId,
+                            token
                         }
                     } else {
                         ctx.body = {
