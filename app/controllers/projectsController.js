@@ -1,27 +1,26 @@
 const projectsList = require('../models/projects')
-const tokenContro = require('../utils/tokencontroll')
+// const tokenValid = require('../utils/tokenValid')
 
 const getProjects = async (ctx, next) => {
     const req = ctx.request.query
-    const tokens = ctx.request.header.authorization
-    if (tokens) {
-        let authority = tokenContro.tokenValid(tokens)
-        console.log('authority', authority)
-        // if (authority && authority.exp <= new Date()/1000) {
-        //     ctx.body = {
-        //         coe: 3,
-        //         msg: 'Token fails!'
-        //     }
-        //     return
-        // }
-
-    } else {
-        ctx.body = {
-            code: 0,
-            msg: '没有token'
-        }
-        return
-    }
+    // const token = ctx.request.header.access_token
+    // if (token) {
+    //     let authority = tokenValid.decodeToken(token)
+    //     console.log('authority', authority, authority.exp)
+    //     if (authority && authority.exp <= parseInt(new Date())) {
+    //         ctx.body = {
+    //             coe: 3,
+    //             msg: 'Token fails!'
+    //         }
+    //         return
+    //     }
+    // } else {
+    //     ctx.body = {
+    //         code: 0,
+    //         msg: '没有token'
+    //     }
+    //     return
+    // }
     const type = req.type
     const obj = {}
     if (type) {

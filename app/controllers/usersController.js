@@ -1,9 +1,9 @@
 const userList = require('../models/users')
 const passwordList = require('../models/passwords')
 const uuidv1 = require('uuid/v1')
+const jwt = require('jsonwebtoken')
 const passport = require('../utils/passport')
 const config = require('../../config')
-const tokenContro = require('../utils/tokencontroll')
 
 // 登录注册时验证手机
 // blur时检验手机号码重复性
@@ -106,7 +106,14 @@ const userLogin = async ctx => {
                     const salt = passwordData.salt
                     const hash = passport.checkPassword(password, salt)
                     if (hash === passwordData.hash) {
-                        const token = tokenContro.addToken(loginUser)
+                        const token = jwt.sign({
+                            userId,
+                            phone,
+                            wechat:loginUser.wechat
+                        }, config.secret, {
+                            issuer: config.issuer,
+                            expiresIn: config.tokenExpiresTime
+                        })
                         ctx.body = {
                             code: 1,
                             msg: 'login success',
