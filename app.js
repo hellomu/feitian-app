@@ -23,15 +23,15 @@ app.use(cors())
 app.use(bodyParser())
 
 
+app.use(koaJwt({
+  secret: config.secret
+}).unless({
+  path: [/^\/user\/login/, /^\/user\/register/, /^\/user\/accountvalid/]
+}))
 app.use(tokenError())
 
 app.use(projcetsRouter.routes()).use(projcetsRouter.allowedMethods())
 app.use(usersRouter.routes()).use(usersRouter.allowedMethods())
 
-app.use(koaJwt({
-  secret: config.secret
-}).unless({
-  path: [/^\/user\/login/, /^\/users\/register/]
-}))
 app.listen(config.port)
 // module.exports = app

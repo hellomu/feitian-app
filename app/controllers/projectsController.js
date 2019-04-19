@@ -3,28 +3,22 @@ const projectsList = require('../models/projects')
 
 const getProjects = async (ctx, next) => {
     const req = ctx.request.query
-    // const token = ctx.request.header.access_token
-    // if (token) {
-    //     let authority = tokenValid.decodeToken(token)
-    //     console.log('authority', authority, authority.exp)
-    //     if (authority && authority.exp <= parseInt(new Date())) {
-    //         ctx.body = {
-    //             coe: 3,
-    //             msg: 'Token fails!'
-    //         }
-    //         return
-    //     }
-    // } else {
-    //     ctx.body = {
-    //         code: 0,
-    //         msg: '没有token'
-    //     }
-    //     return
-    // }
     const type = req.type
+    const cityname = req.cityname
+    const name = req.name
     const obj = {}
     if (type) {
         obj.isgeneralagent = type
+    }
+    cityname && (obj.cityname = cityname)
+    if (name) {
+        obj.$or = []
+        let arr = ['name', 'nameNoHtml', 'description', 'cityname', 'venuecity']
+        arr.forEach(element => {
+            let query = {}
+            query[element] = new RegExp(name,'i')
+            obj.$or.push(query)
+        })
     }
     const curPage = Number(req.curPage) || 1
     const pageSize = Number(req.pageSize) || 10

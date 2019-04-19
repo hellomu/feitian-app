@@ -5,9 +5,9 @@ describe('#test koa app', () =>{
     let server = app.listen(9900)
     discribe('#test server', async() => {
         let res = await request(server)
-            .post('/users/phonevalid')
+            .post('/users/accountvalid')
             .send({
-                phone: 18507139543,
+                account: 18507139543,
                 password: 430051
             })
             .end({

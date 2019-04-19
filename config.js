@@ -3,6 +3,6 @@ module.exports = {
     db:'mongodb://localhost:27017/feitiandb',
     saltRounds: 10,
     secret: 'feitianappkey',
-    tokenExpiresTime: 60*1,
+    tokenExpiresTime: 60*60,
     issuer: 'feitianAdmin'
 }
